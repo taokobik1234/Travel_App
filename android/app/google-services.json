@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "15683589455",
+    "project_id": "flight-booking-86c1e",
+    "storage_bucket": "flight-booking-86c1e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15683589455:android:3b4e9106e4ca313deda13a",
+        "android_client_info": {
+          "package_name": "com.travelly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSrt6tooTozzTf1AjVf0waQrgcnum69m8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
