@@ -17,6 +17,7 @@ import {
 } from "./app/screens/";
 import Login from './app/screens/LoginAndSignUp/Login';
 import TabNavigator from './app/navigators/TabNavigator';
+
 // screen for stack & tabs
 const Stack = createStackNavigator();
 const App = () => {

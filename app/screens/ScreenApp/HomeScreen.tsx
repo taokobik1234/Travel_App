@@ -1,10 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View ,TextInput} from 'react-native'
 import React,{useState} from 'react'
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, FONTS,FONTFAMILY } from '../../constants';
 
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}:any) => {
   const [searchText,setSearchText] = useState('');
   return (
     <View>
@@ -49,9 +50,9 @@ const HomeScreen = () => {
         <View style={styles.BookingContainer}>
           <View style={{flexDirection:'column',height:96,justifyContent:'center',alignItems:'center'}}>
             <TouchableOpacity style={styles.sizeBox}>
-              <SimpleLineIcons 
+              <Icon 
                       style={styles.InputIcon}
-                      name="magnifier" 
+                      name="earth" 
                       size={28} 
                       color= {COLORS.white}/>
             </TouchableOpacity>
@@ -60,9 +61,9 @@ const HomeScreen = () => {
           
           <View style={{flexDirection:'column',height:96,justifyContent:'center',alignItems:'center'}}>
             <TouchableOpacity style={styles.sizeBox}>
-              <SimpleLineIcons 
+              <Icon 
                       style={styles.InputIcon}
-                      name="magnifier" 
+                      name="city-variant-outline" 
                       size={28} 
                       color= {COLORS.white}/>
             </TouchableOpacity>
@@ -70,7 +71,7 @@ const HomeScreen = () => {
           </View>
 
           <View style={{flexDirection:'column',height:96,justifyContent:'center',alignItems:'center'}}>
-            <TouchableOpacity style={styles.sizeBox}>
+            <TouchableOpacity style={styles.sizeBox} onPress={()=> navigation.navigate("TransportBooking")}>
               <SimpleLineIcons 
                       style={styles.InputIcon}
                       name="plane" 
@@ -82,9 +83,9 @@ const HomeScreen = () => {
 
           <View style={{flexDirection:'column',height:96,justifyContent:'center',alignItems:'center'}}>
             <TouchableOpacity style={styles.sizeBox}>
-              <SimpleLineIcons 
+              <Icon 
                       style={styles.InputIcon}
-                      name="magnifier" 
+                      name="balloon" 
                       size={28} 
                       color= {COLORS.white}/>
             </TouchableOpacity>
@@ -127,12 +128,12 @@ const styles = StyleSheet.create({
   },
   sizeBox:{
     // flex: 1,
-    backgroundColor:COLORS.primaryOrangeHex,
+    backgroundColor:COLORS.green,
     alignItems:'center',
     justifyContent:'center',
     height:24*2,
     borderRadius:10,
     borderWidth:2,
-    borderColor: COLORS.primaryOrangeHex
+    borderColor: COLORS.green
   }
 })

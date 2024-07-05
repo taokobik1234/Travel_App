@@ -1,17 +1,46 @@
-import React from 'react';
+import React, { useState,useEffect,useCallback } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { COLORS,FONTFAMILY } from '../../constants';
-import { home } from '../../constants/images';
-const AccountScreen = () => {
+import { avatar } from '../../constants/images';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const loadUserData = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('userData');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    console.log('Error reading value', e);
+    return null;
+  }
+};
+const AccountScreen = ({navigation}:any) => {
+  const [userInfo, setUserInfo] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+    profileImage: 'https://via.placeholder.com/150'
+  });
   const options = [
-    { icon: 'person', text: 'Personal Information' },
-    { icon: 'credit-card', text: 'Payment and cards' },
-    { icon: 'bookmark', text: 'Saved' },
-    { icon: 'history', text: 'Booking history' },
-    { icon: 'settings', text: 'Settings' }
+    { icon: 'person', text: 'Personal Information' ,pressHandler : () =>{navigation.navigate('PersonalInfo')}},
+    { icon: 'credit-card', text: 'Payment and cards',pressHandler : () =>{} },
+    { icon: 'bookmark', text: 'Saved', pressHandler : () =>{}},
+    { icon: 'history', text: 'Booking history' ,pressHandler : () =>{}},
+    { icon: 'settings', text: 'Settings' ,pressHandler : () =>{}}
   ];
 
+  useFocusEffect(
+    useCallback(() => {
+      loadUserData().then(data => {
+        if (data) {
+          setUserInfo(data);
+        }
+      });
+    }, [])
+  );
   return (
     <ScrollView style={styles.container}>
       <View style={{justifyContent:'center'}}>
@@ -27,20 +56,20 @@ const AccountScreen = () => {
       </View>
       <View style={styles.header}>
         <Image
-          source={home} // Replace with actual image URL
+          source={{ uri: userInfo.profileImage }} // Replace with actual image URL
           style={styles.profileImage}
         />
-        <Text style={styles.name}>Victoria Yoker</Text>
+        <Text style={styles.name}>{userInfo.firstName} {userInfo.lastName}</Text>
       </View>
       <View style={styles.optionsList}>
         {options.map((option, index) => (
-          <TouchableOpacity key={index} style={styles.option}>
+          <TouchableOpacity key={index} style={styles.option} onPress={option.pressHandler}>
             <Icon name={option.icon} size={24} color="#333" />
             <Text style={styles.optionText}>{option.text}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} >
         <Icon name="logout" size={24} color="white" />
         <Text style={styles.buttonText}>End session</Text>
       </TouchableOpacity>
@@ -60,12 +89,13 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: 30,
     marginBottom: 10,
   },
   name: {
     fontSize: 20,
     fontWeight: 'bold',
+    color:COLORS.black
   },
   optionsList: {
     marginVertical: 20,

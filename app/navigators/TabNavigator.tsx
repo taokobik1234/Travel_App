@@ -1,13 +1,14 @@
 import { StyleSheet} from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import HomeScreen from '../screens/ScreenApp/HomeScreen'
-import BookingScreen from '../screens/ScreenApp/BookingScreen'
+import HomeNavigator from './HomeNavigator'
+import BookingStackNavigator from './BookingNavigator'
 import NotificationScreen from '../screens/ScreenApp/NotificationScreen'
-import AccountScreen from '../screens/ScreenApp/AccountScreen'
-
+import AccountStackNavigator from './AccountNavigator'
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import CustomIcon from '../components/CustomIcon'
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconBar from '../components/IconBar'
 import { COLORS } from '../constants'
 import { BlurView } from '@react-native-community/blur'
@@ -16,39 +17,44 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
   return (
     <Tab.Navigator  
-        screenOptions={{
-            tabBarHideOnKeyboard:true,
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarStyle: styles.tabBarStyle,
-            tabBarBackground:() =>(
-                <BlurView overlayColor='' blurAmount={15} style={styles.BlurViewStyle}/>
-            )
-            }}>
+    screenOptions={({ route }) => ({
+        tabBarHideOnKeyboard: true,
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: { 
+          display: getTabBarVisibility(route),
+          height: 80,
+          position: 'absolute',
+          backgroundColor: COLORS.black,
+          borderTopWidth: 0,
+          elevation: 0,
+          borderTopColor: 'transparent'
+        }
+    })}>
         <Tab.Screen 
             name='Home' 
-            component={HomeScreen}
+            component={HomeNavigator}
             options={{
                 tabBarIcon: ({focused,color,size}) =>(
                     <IconBar
                         name="home"
                         size ={25}
                         color={
-                            focused? COLORS.blue: COLORS.white
+                            focused? COLORS.primaryOrangeHex: COLORS.white
                         }
                     />
                 )
             }}></Tab.Screen>
         <Tab.Screen 
             name='Booking' 
-            component={BookingScreen}
+            component={BookingStackNavigator}
             options={{
                 tabBarIcon: ({focused,color,size}) =>(
-                    <SimpleLineIcons
-                        name="map"
+                    <Icon
+                        name="ticket-confirmation-outline"
                         size ={25}
                         color={
-                            focused? COLORS.blue: COLORS.white
+                            focused? COLORS.primaryOrangeHex: COLORS.white
                         }
                     />
                 )
@@ -63,7 +69,7 @@ const TabNavigator = () => {
                         name="bells"
                         size ={25}
                         color={
-                            focused? COLORS.blue: COLORS.white
+                            focused? COLORS.primaryOrangeHex: COLORS.white
                         }
                     />
                 )
@@ -71,14 +77,14 @@ const TabNavigator = () => {
             ></Tab.Screen>
         <Tab.Screen 
             name='Account' 
-            component={AccountScreen}
+            component={AccountStackNavigator}
             options={{
                 tabBarIcon: ({focused,color,size}) =>(
                     <SimpleLineIcons
                         name="user"
                         size ={25}
                         color={
-                            focused? COLORS.blue: COLORS.white
+                            focused? COLORS.primaryOrangeHex: COLORS.white
                         }
                     />
                 )
@@ -87,16 +93,28 @@ const TabNavigator = () => {
   )
 }
 
+const getTabBarVisibility = (route:any) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'DefaultScreen';
+  
+    // List of screens where the tab bar should be hidden
+    const hideOnScreens = ['Flights','Filters','SelectSeats'];
+    if (hideOnScreens.includes(routeName)) {
+      return 'none';  // Hide tab bar
+    }
+    return 'flex';  // Show tab bar
+  };
+  
 
 const styles = StyleSheet.create({
-    tabBarStyle:{
-        height: 80,
-        position :'absolute',
-        backgroundColor:COLORS.black,
-        borderTopWidth: 0,
-        elevation: 0,
-        borderTopColor:'transparent',
-    },
+    // tabBarStyle:{
+    //     display:getTabBarVisibility(route),
+    //     height: 80,
+    //     position :'absolute',
+    //     backgroundColor:COLORS.black,
+    //     borderTopWidth: 0,
+    //     elevation: 0,
+    //     borderTopColor:'transparent',
+    // },
     BlurViewStyle:{
         position:'absolute',
         top: 0,

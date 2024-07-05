@@ -15,10 +15,10 @@ import {
   import { useNavigation } from "@react-navigation/native";
   
   const LoginScreen = ({navigation}: any) => {
-    // const navigation = useNavigation();
+
     const [secureEntery, setSecureEntery] = useState(true);
   
-    // console.log(navigation);
+    
     const handleSignup = () => {
     //    navigation.navigate("SIGNUP");
     };
@@ -30,14 +30,13 @@ import {
     return (
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.headingText}>Hey,</Text>
-          <Text style={styles.headingText}>Welcome</Text>
-          <Text style={styles.headingText}>Back</Text>
+          <Text style={styles.headingText}>Welcome Back !</Text>
+          <Text style={styles.headingText1}>Sign in and let's going</Text>
         </View>
         {/* form  */}
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
-            {/* <Ionicons name={"mail-outline"} size={30} color={COLORS.secondary} /> */}
+            
             <TextInput
               style={styles.textInput}
               placeholder="Email"
@@ -46,7 +45,7 @@ import {
             />
           </View>
           <View style={styles.inputContainer}>
-            {/* <SimpleLineIcons name={"lock"} size={30} color={COLORS.secondary} /> */}
+            
             <TextInput
               style={styles.textInput}
               placeholder="Password"
@@ -77,7 +76,7 @@ import {
             
           </TouchableOpacity>
           <View style={styles.footerContainer}>
-            <Text style={styles.accountText}>Don’t have an account?</Text>
+            <Text style={styles.accountText}>New?</Text>
             <TouchableOpacity onPress={handleSignup}>
               <Text style={styles.signupText}>Sign up</Text>
             </TouchableOpacity>
@@ -105,9 +104,15 @@ import {
     },
     textContainer: {
       marginVertical: 20,
+      alignItems:'center'
     },
     headingText: {
       fontSize: 32,
+      color: COLORS.primary,
+      fontFamily: fonts.SemiBold,
+    },
+    headingText1: {
+      fontSize: 20,
       color: COLORS.primary,
       fontFamily: fonts.SemiBold,
     },
@@ -137,7 +142,7 @@ import {
       marginVertical: 10,
     },
     loginButtonWrapper: {
-      backgroundColor: COLORS.primary,
+      backgroundColor: COLORS.primaryOrangeHex,
       borderRadius: 100,
       marginTop: 20,
     },
@@ -156,14 +161,10 @@ import {
       color: COLORS.primary,
     },
     googleButtonContainer: {
-    //   flexDirection: "row",
       borderWidth: 2,
       borderColor: COLORS.primary,
       borderRadius: 100,
-    //   justifyContent: "center",
       alignItems: "center",
-    //   padding: 10,
-    //   gap: 10,
     },
     googleImage: {
       height: 20,
