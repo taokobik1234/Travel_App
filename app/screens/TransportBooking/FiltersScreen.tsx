@@ -4,7 +4,7 @@ import CustomHeader from '../../components/CustomHeader '
 import { COLORS, FONTFAMILY } from '../../constants'
 import { ScrollView } from 'react-native-gesture-handler'
 import Slider  from 'rn-range-slider';
-import { TextInput } from 'react-native-paper';
+import { TextInput,RadioButton } from 'react-native-paper';
 import Thumb from '../SliderComponent/Thumb'
 import RailSelected from '../SliderComponent/RailSelected'
 import Rail from '../SliderComponent/Rail'
@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const FiltersScreen = ({navigation}:any) => {
   const [rangeDisabled, setRangeDisabled] = useState(false);
   const [lowPrice, setLowPrice] = useState(0);
-  const [highPrice, setHighPrice] = useState(100);
+  const [highPrice, setHighPrice] = useState(300);
   const [MinPrice, setMinPrice] = useState(0);
   const [MaxPrice, setMaxPrice] = useState(300);
   const [floatingLabel, setFloatingLabel] = useState(false);
@@ -48,6 +48,19 @@ const FiltersScreen = ({navigation}:any) => {
   setHighPrice(highValue);
 }, []);
   
+  const handleReset = (()=>{
+    setArrivalTime({min:0,max :6});
+    setDepartureTime({min:0,max :6});
+    setLowPrice(0);
+    setHighPrice(300);
+    setFacilities({
+      coffee: false,
+      food: false,
+      wifi: false,
+      ac: false,
+    });
+    setSortBy('');
+  })
 
   return (
     <View style={{backgroundColor:COLORS.gray,flex:1}}>
@@ -118,6 +131,8 @@ const FiltersScreen = ({navigation}:any) => {
           style={styles.slider}
           min={MinPrice}
           max={MaxPrice}
+          low={lowPrice}
+          high={highPrice}
           step={1}
           disableRange={rangeDisabled}
           floatingLabel={floatingLabel}
@@ -176,6 +191,64 @@ const FiltersScreen = ({navigation}:any) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <View>
+        <View>
+            <Text style={{
+              fontSize: 15,
+              fontFamily: FONTFAMILY.poppins_semibold,
+              color:COLORS.black,
+              paddingLeft:30
+          }}>
+              Sort By
+          </Text>
+        </View>
+
+        <View>
+          <View style={{flexDirection:'row',paddingLeft:20}}>
+            <RadioButton value='arrivalTime' status={sortBy ==='arrivalTime'? 'checked': 'unchecked'} onPress={()=>setSortBy('arrivalTime')} color={COLORS.green}/>
+            <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Arrival Time</Text>
+          </View>
+          <View style={{flexDirection:'row',paddingLeft:20}}>
+            <RadioButton value='departureTime' status={sortBy ==='departureTime'? 'checked': 'unchecked'} onPress={()=>setSortBy('departureTime')} color={COLORS.green}/>
+            <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Departure Time</Text>
+          </View>
+          <View style={{flexDirection:'row',paddingLeft:20}}>
+            <RadioButton value='price' status={sortBy ==='price'? 'checked': 'unchecked'} onPress={()=>setSortBy('price')} color={COLORS.green}/>
+            <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Price</Text>
+          </View>
+          <View style={{flexDirection:'row',paddingLeft:20}}>
+            <RadioButton value='lowestFare' status={sortBy ==='lowestFare'? 'checked': 'unchecked'} onPress={()=>setSortBy('lowestFare')} color={COLORS.green}/>
+            <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Lowest fare</Text>
+          </View>
+          <View style={{flexDirection:'row',paddingLeft:20}}>
+            <RadioButton value='duration' status={sortBy ==='duration'? 'checked': 'unchecked'} onPress={()=>setSortBy('duration')} color={COLORS.green}/>
+            <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Duration</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={{flexDirection:'row',padding:10,justifyContent:'space-evenly',alignItems:'center'}}>
+        <TouchableOpacity onPress={()=> handleReset()} style={{
+          height:60,
+          width:180,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginHorizontal: 20,
+          borderRadius: 20,
+          marginTop:10,
+          backgroundColor:COLORS.white
+        }} >
+        
+          <Text style={{color: COLORS.primaryOrangeHex,marginLeft: 10, fontFamily:FONTFAMILY.poppins_bold,textAlign:'center',fontSize:18
+            }}>Reset</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} >
+        
+          <Text style={{color: 'white',marginLeft: 10, fontFamily:FONTFAMILY.poppins_bold,textAlign:'center',fontSize:18
+            }}>Done</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
@@ -231,7 +304,7 @@ const styles = StyleSheet.create({
     fontFamily:FONTFAMILY.poppins_semibold
   },
   facilitiContainer:{
-
+    marginBottom:20,
     flexDirection: 'row',
     marginTop: 10,
     marginHorizontal: 20
@@ -250,6 +323,16 @@ const styles = StyleSheet.create({
   sizeBoxSelect:{
     backgroundColor:COLORS.green,
     borderColor:COLORS.green
+  },
+  button:{
+    height:60,
+    width:180,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    borderRadius: 20,
+    marginTop:10,
+    backgroundColor:COLORS.primaryOrangeHex
   }
 
 })

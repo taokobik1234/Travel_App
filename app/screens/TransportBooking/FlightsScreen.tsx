@@ -33,10 +33,10 @@ const flights: Flight[] = [];
 const FlightsScreen = ({ route, navigation }:any) => {
   const days = ["TH", "FR", "SA", "SU", "MO", "TU", "WE"];  
   const [flights, setFlights] = useState<Flight[]>([]);
-  const { fromCity, toCity, departureDate,Class } = route.params;
+  const { fromCity, toCity, departureDate,Class ,passengers} = route.params;
   const [selectedDate, setSelectedDate] = useState<number>(0);
   const handlePressFlight = useCallback((flight:any) => {
-    navigation.navigate('SelectSeats', { flight });
+    navigation.navigate('SelectSeats', { flight,passengers });
   }, [navigation]);
   
 
