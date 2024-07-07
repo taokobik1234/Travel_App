@@ -9,6 +9,9 @@ export const Hotel = require("../assets/images/Hotel.png")
 export const Transport = require("../assets/images/Transport.png")
 export const Events = require("../assets/images/Events.png")
 export const flightCard = require("../assets/images/FlightCard.png")
+export const boardingPass = require("../assets/images/BoardingPass.png")
+export const Plane = require("../assets/images/Plane.png")
+export const Code = require("../assets/images/BarCode.png")
 
 export default {
   onboarding1,
@@ -21,5 +24,8 @@ export default {
   Hotel,
   Transport,
   Events,
-  flightCard
+  flightCard,
+  boardingPass,
+  Plane,
+  Code
 }

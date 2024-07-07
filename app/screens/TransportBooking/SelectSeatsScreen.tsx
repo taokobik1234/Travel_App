@@ -1,74 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList ,Alert} from 'react-native';
 import { COLORS, FONTFAMILY } from '../../constants';
 import CustomHeader from '../../components/CustomHeader ';
+import TravellerSelection from '../../components/TravellerSelection';
+import SeatSelection from '../../components/SeatSelection';
 
-
-
-const TravellerSelection = ({ onSelectTraveller, selectedTraveller }:any) => {
-  return (
-    <View>
-      <View>
-            <Text style={{
-              fontSize: 15,
-              fontFamily: FONTFAMILY.poppins_semibold,
-              color:COLORS.black,
-              paddingLeft:10,
-              marginTop:20,
-          }}>
-              Traveller
-          </Text>
-        </View>
-      <View style={styles.travellerContainer}>
-        
-        {Array.from({ length: 6 }, (_, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.travellerButton,
-              selectedTraveller === index + 1 && styles.selectedTravellerButton,
-            ]}
-            onPress={() => onSelectTraveller(index + 1)}
-          >
-            <Text style={{color:COLORS.black}}>{index + 1}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-  );
+type Seat = {
+  id: string;
+  status: 'available' | 'booked' | 'unavailable';
 };
 
-const SeatSelection = ({ seats, onSeatSelect, selectedSeat }:any) => {
-  const renderSeat = ({ item }:any) => (
-    <TouchableOpacity
-      style={[
-        styles.seat,
-        item.status === 'available' && styles.availableSeat,
-        item.status === 'booked' && styles.bookedSeat,
-        item.status === 'unavailable' && styles.unavailableSeat,
-        selectedSeat === item.id && styles.selectedSeat,
-      ]}
-      disabled={item.status !== 'available'}
-      onPress={() => onSeatSelect(item.id)}
-    >
-      <Text>{item.id}</Text>
-    </TouchableOpacity>
-  );
-
-  return (
-    <FlatList
-      data={seats}
-      renderItem={renderSeat}
-      keyExtractor={(item) => item.id.toString()}
-      numColumns={4}
-      contentContainerStyle={styles.seatContainer}
-    />
-  );
-};
+type Traveller = number;
 
 const App = ({navigation,route}:any) => {
-  const [selectedTraveller, setSelectedTraveller] = useState(1);
-  const [selectedSeat, setSelectedSeat] = useState(null);
+  const [selectedTraveller, setSelectedTraveller] = useState<Traveller>(1);
+  const [seatSelections, setSeatSelections] = useState<{ [key: number]: string }>({});
+
+
   const {flight,passengers} = route.params;
   const AVAILABLE_SEATS = flight.available_seats;
   const BOOKED_SEATS = flight.booked_seats;
@@ -101,15 +49,24 @@ const generateSeats = () => {
   };
 
   const handleSeatSelect = (seat:any) => {
-    setSelectedSeat(seat);
+    // Check if the seat is already selected
+    if (Object.values(seatSelections).includes(seat)) {
+      Alert.alert('This seat is already taken.');
+      return;
+    }
+    // Update the seat selection for the current traveler
+    setSeatSelections((prev) => ({ ...prev, [selectedTraveller]: seat }));
   };
-
+  
+  const selectedSeatsCount = Object.keys(seatSelections).length;
+  
   return (
     <View style={styles.container}>
       <CustomHeader title='Select Seats' onBackPress={()=> navigation.goBack()}/>
       <TravellerSelection
         onSelectTraveller={handleTravellerSelect}
         selectedTraveller={selectedTraveller}
+        passengers={passengers}
       />
 
 <View style={styles.legendContainer}>
@@ -126,14 +83,22 @@ const generateSeats = () => {
         <Text style={styles.legendText}>Available</Text>
       </View>
     </View>
-      <SeatSelection seats={seats} onSeatSelect={handleSeatSelect} selectedSeat={selectedSeat} />
-      <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>
-          Your seats: Traveller {selectedTraveller} / Seat {selectedSeat}
-        </Text>
-        <Text style={styles.infoText}>Total price: $50.00</Text>
+      <SeatSelection seats={seats} onSeatSelect={handleSeatSelect} selectedSeat={seatSelections} />
+      <View style={styles.summaryContainer}>
+        <View>
+          <Text style={styles.summaryLabel}>Your seats</Text>
+          {Object.entries(seatSelections).map(([traveller, seat]) => (
+            <Text key={traveller} style={styles.summaryText}>
+              Traveller {traveller} / Seat {seat}
+            </Text>
+          ))}
+        </View>
+        <View>
+          <Text style={styles.summaryLabel}>Total price</Text>
+          <Text style={styles.totalPriceText}>${selectedSeatsCount*flight.price}</Text>
+        </View>
       </View>
-      <TouchableOpacity style={styles.continueButton}>
+      <TouchableOpacity style={styles.continueButton} onPress={() => navigation.navigate('BoardingPass',{flight,seatSelections})}>
         <Text>Continue</Text>
       </TouchableOpacity>
     </View>
@@ -141,6 +106,27 @@ const generateSeats = () => {
 };
 
 const styles = StyleSheet.create({
+  summaryContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    padding: 10,
+    borderTopWidth: 1,
+    borderColor: '#ccc',
+  },
+  summaryLabel: {
+    fontSize: 16,
+    color: COLORS.green,
+    fontWeight: 'bold',
+  },
+  summaryText: {
+    fontSize: 16,
+    color: COLORS.black,
+  },
+  totalPriceText: {
+    fontSize: 16,
+    color: COLORS.black,
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -151,48 +137,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  travellerContainer: {
-    flexDirection: 'row',
-    // justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  travellerButton: {
-    width:50,
-    padding: 10,
-    borderWidth: 2,
-    borderColor: COLORS.white,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginRight:10
-  },
-  selectedTravellerButton: {
-    backgroundColor: '#ffcc80',
-  },
-  seatContainer: {
-    alignItems: 'center',
-  },
-  seat: {
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
-    borderRadius:10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  availableSeat: {
-    backgroundColor: '#b2dfdb',
-  },
-  bookedSeat: {
-    backgroundColor: '#004d40',
-  },
-  unavailableSeat: {
-    backgroundColor: '#ccc',
-  },
-  selectedSeat: {
-    backgroundColor: COLORS.primaryOrangeHex,
-  },
+  
+  
   infoContainer: {
     marginTop: 20,
     padding: 10,
@@ -209,7 +155,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: COLORS.primaryOrangeHex,
     alignItems: 'center',
-    borderRadius: 5,
+    borderRadius: 15,
   },
   legendContainer: {
     flexDirection: 'row',

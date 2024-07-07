@@ -97,7 +97,7 @@ const getTabBarVisibility = (route:any) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'DefaultScreen';
   
     // List of screens where the tab bar should be hidden
-    const hideOnScreens = ['Flights','Filters','SelectSeats'];
+    const hideOnScreens = ['Flights','Filters','SelectSeats','BoardingPass'];
     if (hideOnScreens.includes(routeName)) {
       return 'none';  // Hide tab bar
     }

@@ -4,6 +4,7 @@ import TransportBookingScreen from '../screens/TransportBooking/TransportBooking
 import FlightsScreen from '../screens/TransportBooking/FlightsScreen';
 import FiltersScreen from '../screens/TransportBooking/FiltersScreen';
 import SelectSeatsScreen from '../screens/TransportBooking/SelectSeatsScreen';
+import BoardingPass from '../screens/TransportBooking/BoardingPass';
 const BookingStack = createStackNavigator();
 
 export default function BookingStackNavigator() {
@@ -14,6 +15,7 @@ export default function BookingStackNavigator() {
       <BookingStack.Screen name="Flights" component={FlightsScreen} />
       <BookingStack.Screen name="Filters" component={FiltersScreen} />
       <BookingStack.Screen name="SelectSeats" component={SelectSeatsScreen} />
+      <BookingStack.Screen name="BoardingPass" component={BoardingPass} />
     </BookingStack.Navigator>
   );
 }
