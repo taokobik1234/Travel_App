@@ -98,7 +98,13 @@ const generateSeats = () => {
           <Text style={styles.totalPriceText}>${selectedSeatsCount*flight.price}</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.continueButton} onPress={() => navigation.navigate('BoardingPass',{flight,seatSelections})}>
+      <TouchableOpacity style={styles.continueButton} onPress={() => {
+        if(selectedSeatsCount != passengers){
+          Alert.alert('Please take enough seat');
+        }else{
+          navigation.navigate('BoardingPass',{flight,seatSelections})
+        }
+      }}>
         <Text>Continue</Text>
       </TouchableOpacity>
     </View>

@@ -69,7 +69,7 @@ const AccountScreen = ({navigation}:any) => {
           </TouchableOpacity>
         ))}
       </View>
-      <TouchableOpacity style={styles.button} >
+      <TouchableOpacity style={styles.button}  onPress={() => navigation.navigate("Login")}>
         <Icon name="logout" size={24} color="white" />
         <Text style={styles.buttonText}>End session</Text>
       </TouchableOpacity>

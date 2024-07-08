@@ -1,4 +1,5 @@
 import {
+  Alert,
     Image,
     StyleSheet,
     Text,
@@ -14,17 +15,26 @@ import {
   import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
   import { useNavigation } from "@react-navigation/native";
   
+  const User ={
+    email: "thienvovinpro123@gmail.com",
+    password: "1234"
+  }
   const LoginScreen = ({navigation}: any) => {
 
     const [secureEntery, setSecureEntery] = useState(true);
   
-    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const handleSignup = () => {
     //    navigation.navigate("SIGNUP");
     };
 
     const handleLogin =() => {
+      if(email == User.email && password == User.password){
         navigation.navigate("TabNavigator",{screen: "Home"});
+      } else{
+        Alert.alert("Email does not exist or wrong password");
+      }
     }
   
     return (
@@ -38,19 +48,23 @@ import {
           <View style={styles.inputContainer}>
             
             <TextInput
+              value={email}
               style={styles.textInput}
               placeholder="Email"
               placeholderTextColor={COLORS.secondary}
               keyboardType="email-address"
+              onChangeText={setEmail}
             />
           </View>
           <View style={styles.inputContainer}>
             
             <TextInput
+              value={password}
               style={styles.textInput}
               placeholder="Password"
               placeholderTextColor={COLORS.secondary}
               secureTextEntry={secureEntery}
+              onChangeText={setPassword}
             />
             <TouchableOpacity
               onPress={() => {

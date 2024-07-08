@@ -308,7 +308,7 @@ const TransportBookingScreen = ({navigation}:any) => {
 
         </View>
         <TouchableOpacity style={styles.button} onPress={()=>{
-          navigation.navigate("Flights",{fromCity,toCity,departureDate:formatDateToISO(departureDate),returnDate: formatDateToISO(returnDate),passengers,Class,});
+          navigation.navigate("Flights",{flight:{fromCity,toCity,departureDate:formatDateToISO(departureDate),returnDate: formatDateToISO(returnDate),passengers,Class,}});
         }}>
         
           <Text style={{color: 'white',marginLeft: 10,

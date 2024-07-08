@@ -28,44 +28,75 @@ interface Flight {
   to_location: string;
 }
 
+interface Filters {
+  lowPrice?: number;
+  highPrice?: number;
+  departureTime?: { min: number, max: number };
+  arrivalTime?: { min: number, max: number };
+  facilities?: {
+    coffee?: boolean;
+    food?: boolean;
+    wifi?: boolean;
+    ac?: boolean;
+  };
+  sortBy?: string;
+}
 // Example usage:
 const flights: Flight[] = [];
 const FlightsScreen = ({ route, navigation }:any) => {
   const days = ["TH", "FR", "SA", "SU", "MO", "TU", "WE"];  
   const [flights, setFlights] = useState<Flight[]>([]);
-  const { fromCity, toCity, departureDate,Class ,passengers} = route.params;
+  const { flight} = route.params;
+  const passengers = flight.passengers;
   const [selectedDate, setSelectedDate] = useState<number>(0);
   const handlePressFlight = useCallback((flight:any) => {
     navigation.navigate('SelectSeats', { flight,passengers });
   }, [navigation]);
   
-
-  
+  const [filters, setFilters] = useState<Filters>();
     useEffect(() => {
-    const newDepartureDate = new Date(departureDate);
+      if (route.params?.filters) {
+        setFilters(route.params.filters);
+        
+        navigation.setParams({ filters: undefined });
+      }else if(!route.params?.filters){
+        setFilters(undefined);
+      }
+      console.log(filters)
+    const newDepartureDate = new Date(flight.departureDate);
     newDepartureDate.setDate(newDepartureDate.getDate() + selectedDate);
     const formattedDate = formatDateToISO(newDepartureDate);
-    const unsubscribe = firestore()
+
+     let query= firestore()
       .collection('FlightBooking')
-      .where('from_location', '==', fromCity)
-      .where('to_location', '==', toCity)
+      .where('from_location', '==', flight.fromCity)
+      .where('to_location', '==', flight.toCity)
       .where('departure_date', '==', formattedDate)
-      .where('class','==',Class)
-      .onSnapshot(querySnapshot => {
-        const flightsData = querySnapshot.docs.map(doc => {
-          const data = doc.data() as Flight; 
-          data.id = doc.id;
-          return {
-            ...data,
-          };
-        });
-       
-        setFlights(flightsData);
+      .where('class','==',flight.Class)
+      if (filters) {
+          query = query.where('price', '>=',filters.lowPrice).where('price', '<=', filters.highPrice);
+          if(filters.sortBy?.includes('price') ){
+            query = query.orderBy('price', 'asc')
+          } 
+      }else{
+        console.log("No filter");
+      }
+      const unsubscribe= query.onSnapshot(querySnapshot => {
+        if (querySnapshot) {
+          const flightsData = querySnapshot.docs.map(doc => {
+            const data = doc.data() as Flight;
+            data.id = doc.id;
+            return data;
+          });
+          setFlights(flightsData);
+        } else {
+          console.log("No data available");
+          setFlights([]); // Or handle as needed
+        }
       });
 
     return () => unsubscribe();
-  }, [fromCity, toCity, selectedDate])
-  
+  }, [flight.fromCity, flight.toCity,flight.Class, selectedDate,route.params?.filters])
   return (
     <ScrollView style={styles.container}>
       <CustomHeader title='Flight' onBackPress={()=> navigation.goBack()}/>
@@ -77,13 +108,13 @@ const FlightsScreen = ({ route, navigation }:any) => {
               }
           }>
             <Text style={[styles.day, selectedDate === index && styles.selectedDay]}>{day} </Text>
-            <Text style={[styles.date, selectedDate === index && styles.selectedDateText]}>{new Date(departureDate).getDate() + index}</Text>
+            <Text style={[styles.date, selectedDate === index && styles.selectedDateText]}>{new Date(flight.departureDate).getDate() + index}</Text>
           </TouchableOpacity>
         ))}
       </View>
         <View style={styles.flightInfo}>
-          <Text style={{color:COLORS.black,paddingLeft:10,fontFamily:FONTFAMILY.poppins_extrabold}}>{flights.length} flights availabe {fromCity} to {toCity} </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Filters')} style={{backgroundColor:COLORS.primaryOrangeHex,borderRadius:15,height:40,width:40,alignItems:'center',justifyContent:'center'}}>
+          <Text style={{color:COLORS.black,paddingLeft:10,fontFamily:FONTFAMILY.poppins_extrabold}}>{flights.length} flights availabe {flight.fromCity} to {flight.toCity} </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Filters',flight)} style={{backgroundColor:COLORS.primaryOrangeHex,borderRadius:15,height:40,width:40,alignItems:'center',justifyContent:'center'}}>
             <Icon name="filter-list" size={24} color="white" />
           </TouchableOpacity>
         </View>

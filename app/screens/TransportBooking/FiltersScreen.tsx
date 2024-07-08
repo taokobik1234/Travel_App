@@ -12,12 +12,14 @@ import Notch from '../SliderComponent/Notch'
 import Label from '../SliderComponent/Label'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const FiltersScreen = ({navigation}:any) => {
+type SortOption = 'arrivalTime' | 'departureTime' | 'price' | 'lowestFare' | 'duration';
+const FiltersScreen = ({navigation,route}:any) => {
+  const flight = route.params;
   const [rangeDisabled, setRangeDisabled] = useState(false);
   const [lowPrice, setLowPrice] = useState(0);
-  const [highPrice, setHighPrice] = useState(300);
+  const [highPrice, setHighPrice] = useState(400);
   const [MinPrice, setMinPrice] = useState(0);
-  const [MaxPrice, setMaxPrice] = useState(300);
+  const [MaxPrice, setMaxPrice] = useState(400);
   const [floatingLabel, setFloatingLabel] = useState(false);
   const times = [
     {time:'12AM - 06AM',value:{min:0,max :6}},
@@ -27,7 +29,7 @@ const FiltersScreen = ({navigation}:any) => {
   ]
   const [departureTime, setDepartureTime] = useState({min:0,max :6});
   const [arrivalTime, setArrivalTime] = useState({min:0,max :6});
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption[]>([]);
   const [facilities, setFacilities] = useState({
     coffee: false,
     food: false,
@@ -48,6 +50,15 @@ const FiltersScreen = ({navigation}:any) => {
   setHighPrice(highValue);
 }, []);
   
+const toggleSortBy = (value: SortOption) => {
+  setSortBy((prevSortBy) => {
+    if (prevSortBy.includes(value)) {
+      return prevSortBy.filter((item) => item !== value);
+    } else {
+      return [...prevSortBy, value];
+    }
+  });
+};
   const handleReset = (()=>{
     setArrivalTime({min:0,max :6});
     setDepartureTime({min:0,max :6});
@@ -59,7 +70,7 @@ const FiltersScreen = ({navigation}:any) => {
       wifi: false,
       ac: false,
     });
-    setSortBy('');
+    setSortBy([]);
   })
 
   return (
@@ -206,23 +217,23 @@ const FiltersScreen = ({navigation}:any) => {
 
         <View>
           <View style={{flexDirection:'row',paddingLeft:20}}>
-            <RadioButton value='arrivalTime' status={sortBy ==='arrivalTime'? 'checked': 'unchecked'} onPress={()=>setSortBy('arrivalTime')} color={COLORS.green}/>
+            <RadioButton value='arrivalTime' status={sortBy.includes('arrivalTime')? 'checked': 'unchecked'} onPress={() => toggleSortBy('arrivalTime')} color={COLORS.green}/>
             <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Arrival Time</Text>
           </View>
           <View style={{flexDirection:'row',paddingLeft:20}}>
-            <RadioButton value='departureTime' status={sortBy ==='departureTime'? 'checked': 'unchecked'} onPress={()=>setSortBy('departureTime')} color={COLORS.green}/>
+            <RadioButton value='departureTime' status={sortBy.includes('departureTime')? 'checked': 'unchecked'} onPress={()=>toggleSortBy('departureTime')} color={COLORS.green}/>
             <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Departure Time</Text>
           </View>
           <View style={{flexDirection:'row',paddingLeft:20}}>
-            <RadioButton value='price' status={sortBy ==='price'? 'checked': 'unchecked'} onPress={()=>setSortBy('price')} color={COLORS.green}/>
+            <RadioButton value='price' status={sortBy.includes('price')? 'checked': 'unchecked'} onPress={()=>toggleSortBy('price')} color={COLORS.green}/>
             <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Price</Text>
           </View>
           <View style={{flexDirection:'row',paddingLeft:20}}>
-            <RadioButton value='lowestFare' status={sortBy ==='lowestFare'? 'checked': 'unchecked'} onPress={()=>setSortBy('lowestFare')} color={COLORS.green}/>
+            <RadioButton value='lowestFare' status={sortBy.includes('lowestFare')? 'checked': 'unchecked'} onPress={()=>toggleSortBy('lowestFare')} color={COLORS.green}/>
             <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Lowest fare</Text>
           </View>
           <View style={{flexDirection:'row',paddingLeft:20}}>
-            <RadioButton value='duration' status={sortBy ==='duration'? 'checked': 'unchecked'} onPress={()=>setSortBy('duration')} color={COLORS.green}/>
+            <RadioButton value='duration' status={sortBy.includes('duration')? 'checked': 'unchecked'} onPress={()=>toggleSortBy('duration')} color={COLORS.green}/>
             <Text style={{justifyContent:'center',fontSize:20,color:COLORS.black}}>Duration</Text>
           </View>
         </View>
@@ -243,7 +254,19 @@ const FiltersScreen = ({navigation}:any) => {
           <Text style={{color: COLORS.primaryOrangeHex,marginLeft: 10, fontFamily:FONTFAMILY.poppins_bold,textAlign:'center',fontSize:18
             }}>Reset</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} >
+        <TouchableOpacity style={styles.button}  onPress={() => {
+          // Pass the filters as parameters
+          navigation.navigate('Flights', {
+            filters: {
+              lowPrice,
+              highPrice,
+              departureTime,
+              arrivalTime,
+              facilities,
+              sortBy,
+            },flight
+          });
+        }} >
         
           <Text style={{color: 'white',marginLeft: 10, fontFamily:FONTFAMILY.poppins_bold,textAlign:'center',fontSize:18
             }}>Done</Text>
